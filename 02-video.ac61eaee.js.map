@@ -1,1 +1,0 @@
-{"mappings":"YAAA,IAAMA,EAAcC,SAASC,cAAc,iBAC3CC,QAAQC,IAAIJ,E","sources":["src/js/02-video.js"],"sourcesContent":["const videoPlayer = document.querySelector('#vimeo-player');\nconsole.log(videoPlayer);"],"names":["$5a94271ad32ea534$var$videoPlayer","document","querySelector","console","log"],"version":3,"file":"02-video.ac61eaee.js.map"}
