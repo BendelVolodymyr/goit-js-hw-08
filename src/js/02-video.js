@@ -1,10 +1,56 @@
-import Player from '@vimeo/player';
+//npm
+import Player from '@vimeo/player'; //підключення бібліотеки плеєра
+//npm
+import throttle from 'lodash.throttle'; // підключення бібліотеки
 
-const player = new Player('handstick', {
-    id: 19231868,
-    width: 640
-});
+const iframe = document.querySelector('iframe'); // програвач в HTML
 
-player.on('play', function() {
-    console.log('played the video!');
+const player = new Player(iframe);
+const onPlay = function (data) {
+    localStorage.setItem('videoplayer-current-time', data.seconds);// додаваня в локал кеш теперишній час відео ( ключ 'videoplayer-current-time')
+};
+player.on('timeupdate', throttle(onPlay, 1000));//подія оновлення часу + бібліотека оновлення кожні 1000 ms
+
+const time = localStorage.getItem('videoplayer-current-time'); // час який збережений в локал кеш
+
+player.setCurrentTime(time).then(function(seconds) {
+    // seconds = the actual time that the player seeked to
+}).catch(function(error) {
+    switch (error.name) {
+        case 'RangeError':
+            // the time was less than 0 or greater than the video’s duration
+            break;
+
+        default:
+            // some other error occurred
+            break;
+    }
 });
+document.body.style.cssText = `
+display: flex;
+flex-direction:column;
+row-gap: 40px;
+`;
+
+const newButton = document.createElement('button');
+newButton.textContent = 'Clear cache';
+newButton.setAttribute('type', 'button');
+newButton.classList.add('btn');
+newButton.style.cssText = `
+        width: 100px;
+height: 100px;
+color: #3a86ff;
+font-size: 20px;
+background-color: #8ecae6;
+border: none;
+border-radius: 10px;
+box-shadow: 1px 1px #888888;
+`;
+iframe.after(newButton);
+
+const button = document.querySelector('button');
+const clearCache = () => {
+    localStorage.clear();
+    console.log(localStorage.length);
+};
+button.addEventListener('click', clearCache);// подія слік на чищення локал кешу
