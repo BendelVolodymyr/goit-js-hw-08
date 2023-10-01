@@ -1,19 +1,35 @@
 import throttle from 'lodash.throttle';
 
-const submitForm = document.querySelector('.feedback-form');
-const localKey = 'feedback-form-state';
-const input = document.querySelector('input');
 
-submitForm.addEventListener('submit', feedbackInput);
+
+const submitFormEl = document.querySelector('.feedback-form');
+const inputEl = document.querySelector('input');
+const messageEl = document.querySelector('.feedback-form textarea');
+const localKey = 'feedback-form-state';
+const resultLocal = JSON.parse(localStorage.getItem(localKey));
+submitFormEl.addEventListener('submit', feedbackInput);
+prevent();
+function prevent() {
+    
+  const objectValues = resultLocal;
+
+    if (objectValues) {
+        
+        inputEl.value = resultLocal.email || ''; // дані з локала або пусто
+        messageEl.value = objectValues.message || '';
+    }
+
+};
 
 function feedbackInput(event) {
     event.preventDefault();
-   console.log(localStorage.getItem('feedback-form-state')); 
+   
     var { elements: { email, message } } = event.currentTarget;
     if (email.value.trim() === '' || message.value.trim() === '') {
         return  alert('Всі поля форми повинні бути заповнені');
     }
-    localStorage.removeItem('feedback-form-state'); 
+    console.log(JSON.parse(localStorage.getItem('feedback-form-state'))); // виводить дані з локал кеш
+    localStorage.removeItem('feedback-form-state');  // Видаленя ключа в локал кеш
     
 
     
@@ -21,24 +37,15 @@ event.currentTarget.reset();
 
 };
 
-
-const inputResult = (event) => {
-    var { elements: { email, message } } = event.currentTarget;
+submitFormEl.addEventListener('input', throttle(inputResult, 500));
+function inputResult(event) {
     
-    var key = localStorage.getItem(localKey); // local key;
-    JSON.parse(key);
-     let data = {
-        email: email.value.trim(),
-        message: message.value.trim(),
-      };
-    
-    console.log(data);
-
-      // data[e.target.name] = e.target.value.trim(); // виводить в localStorage лише один ключ з значенням, якщо інший не заповнений
-     return localStorage.setItem(localKey, JSON.stringify(data));
-}
-
-submitForm.addEventListener('input', throttle(inputResult, 500));
+    let result = localStorage.getItem(localKey); // дістаємо з сховища
+     result = result ? JSON.parse(result) : {}; // try = Parser, fals = {}
+    result[event.target.name] = event.target.value.trim(); // вибір таргета і результат 
+    localStorage.setItem(localKey, JSON.stringify(result)); // записуємо в локал кеш як обьєкт!
+};
+submitFormEl.addEventListener('input', throttle(inputResult, 500));
 
 
 
