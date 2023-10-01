@@ -50,7 +50,6 @@ iframe.after(newButton);
 
 const button = document.querySelector('button');
 const clearCache = () => {
-    localStorage.clear();
-    console.log(localStorage.length);
+    localStorage.removeItem('videoplayer-current-time');
 };
 button.addEventListener('click', clearCache);// подія слік на чищення локал кешу
