@@ -7,11 +7,11 @@ const iframe = document.querySelector('iframe'); // програвач в HTML
 
 const player = new Player(iframe);
 const onPlay = function (data) {
-    localStorage.setItem('videoplayer-current-time', data.seconds);// додаваня в локал кеш теперишній час відео ( ключ 'videoplayer-current-time')
+    localStorage.setItem(LOCAL_KEY, data.seconds);// додаваня в локал кеш теперишній час відео ( ключ 'videoplayer-current-time')
 };
 player.on('timeupdate', throttle(onPlay, 1000));//подія оновлення часу + бібліотека оновлення кожні 1000 ms
-
-const time = localStorage.getItem('videoplayer-current-time'); // час який збережений в локал кеш
+const LOCAL_KEY = 'videoplayer-current-time'; // LOCAL_KEY
+const time = localStorage.getItem(LOCAL_KEY); // час який збережений в локал кеш
 
 player.setCurrentTime(time).then(function(seconds) {
     // seconds = the actual time that the player seeked to
@@ -50,6 +50,6 @@ iframe.after(newButton);
 
 const button = document.querySelector('button');
 const clearCache = () => {
-    localStorage.removeItem('videoplayer-current-time');
+    localStorage.removeItem(LOCAL_KEY);
 };
 button.addEventListener('click', clearCache);// подія слік на чищення локал кешу
